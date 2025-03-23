@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-app
+  labels:
+    app: task-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: task-app
+  template:
+    metadata:
+      labels:
+        app: task-app
+    spec:
+      serviceAccountName: task-service-account
+      containers:
+        - name: task-app
+          image: tuimagen/microservicio:latest
+          ports:
+            - containerPort: 8080
+          securityContext:
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: 
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+      automountServiceAccountToken: false
